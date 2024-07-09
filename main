@@ -1,0 +1,47 @@
+import requests
+
+class Parser:
+
+    def __init__(self, keywords):
+        self.keywords = keywords
+        url = "https://restcountries.com/v3.1/all?fields={}".format(self.keywords)
+        self.response = requests.get(url).json()
+        # print(self.response)
+
+
+
+
+    def get_data(self, data_dict, keys):
+        data = data_dict
+        for key in keys:
+            data = data[key]
+        return data
+
+    def get_countries(self):
+        count = 1
+        keywords = self.keywords.split(",")
+        for country in self.response:
+            name = []
+            for keyword in keywords:
+                if keyword == "name":
+                    try:
+                        name.append(self.get_data(country, [keyword, 'common']))
+                    except:
+                        name.append(None)
+                elif keyword == "flags":
+                    try:
+                        name.append(self.get_data(country, [keyword, 'png']))
+                    except:
+                        name.append(None)
+                else:
+                    try:
+                        name.append(self.get_data(country, [keyword]))
+                    except:
+                        name.append(None)
+            print(count, name)
+            count += 1
+
+if __name__ == "__main__":
+    Parser("name,capital,flags").get_countries()
+
+
